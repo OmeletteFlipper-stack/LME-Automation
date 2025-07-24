@@ -1,3 +1,4 @@
+"""
 print('''        
                AAA               BBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBB   
               A:::A              B::::::::::::::::B  B::::::::::::::::B  
@@ -16,6 +17,7 @@ print('''
  A:::::A                 A:::::A B::::::::::::::::B  B::::::::::::::::B  
 AAAAAAA                   AAAAAAABBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBB                                                                                                                                                  
 ''')
+"""
 print("This code is designed to scrape multiple data sources and export the data of certain metals at 9am EST to a CSV.")
 import pandas as pd
 websites = {'aluminum': 'https://www.lme.com/en/metals/non-ferrous/lme-aluminium#Trading+summary', 
