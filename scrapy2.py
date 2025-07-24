@@ -64,7 +64,7 @@ def scrape(website):
     driver.quit()
   finally:
         print("prices scraped: ",bids, " ",offers)
-
+        print(driver.page_source)
         return bids, offers
       
 
