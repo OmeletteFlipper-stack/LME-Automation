@@ -23,9 +23,9 @@ websites = {'aluminum': 'https://www.lme.com/en/metals/non-ferrous/lme-aluminium
             'copper':'https://www.lme.com/en/metals/non-ferrous/lme-copper#Trading+summary', 
             'zinc' : 'https://www.lme.com/en/Metals/Non-ferrous/LME-Zinc#Intraday+prices+and+monthly+quotes'}  #   A dictionary that holds all the LME Websites
 files = {
-    'Aluminum' : r"C:\Users\USYOEDD\OneDrive - ABB\ELIP SCM HOME - Data Automation\LME Aluminum.csv",
-    'Copper' :r"C:\Users\USYOEDD\OneDrive - ABB\ELIP SCM HOME - Data Automation\LME Copper.csv",
-    'Zinc' : r"C:\Users\USYOEDD\OneDrive - ABB\ELIP SCM HOME - Data Automation\LME Zinc.csv"
+    'Aluminum' : "LME Aluminum.csv",
+    'Copper' :"LME Copper.csv",
+    'Zinc' : "LME Zinc.csv"
 }
 from selenium import webdriver
 from selenium.webdriver.common.by import By
