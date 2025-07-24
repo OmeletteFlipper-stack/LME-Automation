@@ -32,14 +32,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
 import time
 def create_driver():
-    """Create and configure Firefox driver for headless operation"""
     options = Options()
-    options.add_argument('--headless')               #runs firefox without a visible browser window.
-    options.add_argument('--no-sandbox')             #disables sandbox security feature
-    options.add_argument('--disable-dev-shm-usage')  #prevents firefox from shared mem.
-    options.add_argument('--window-size=1920,1080')  #css so that elements are not missed.
-    
-    return webdriver.Firefox(options=options)
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--window-size=1920,1080')
+    return webdriver.Chrome(options=options)
 
 def scrape(website):
   driver = create_driver()
