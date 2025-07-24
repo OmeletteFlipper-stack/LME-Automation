@@ -1,5 +1,3 @@
-import pandas as pd
-
 print('''        
                AAA               BBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBB   
               A:::A              B::::::::::::::::B  B::::::::::::::::B  
@@ -19,6 +17,7 @@ print('''
 AAAAAAA                   AAAAAAABBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBB                                                                                                                                                  
 ''')
 print("This code is designed to scrape multiple data sources and export the data of certain metals at 9am EST to a CSV.")
+import pandas as pd
 websites = {'aluminum': 'https://www.lme.com/en/metals/non-ferrous/lme-aluminium#Trading+summary', 
             'copper':'https://www.lme.com/en/metals/non-ferrous/lme-copper#Trading+summary', 
             'zinc' : 'https://www.lme.com/en/Metals/Non-ferrous/LME-Zinc#Intraday+prices+and+monthly+quotes'}  #   A dictionary that holds all the LME Websites
@@ -30,7 +29,7 @@ files = {
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-
+from selenium.webdriver.firefox.options import Options
 import time
 def create_driver():
     """Create and configure Firefox driver for headless operation"""
@@ -41,30 +40,29 @@ def create_driver():
     options.add_argument('--window-size=1920,1080')  #css so that elements are not missed.
     
     return webdriver.Firefox(options=options)
-driver = create_driver()
 
 def scrape(website):
-    try:
-        # Open the website
-        driver.get(website)
-        print("Website opened")
+  driver = create_driver()
+  try:
+      # Open the website
+      driver.get(website)
+      print("Website opened")
+      time.sleep(1)
+      bid = driver.find_element(
+          By.XPATH,
+          '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
+          )
+      offer = driver.find_element(
+          By.XPATH, 
+          '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[2]'
+      )
 
-        time.sleep(1)
-        bid = driver.find_element(
-            By.XPATH,
-            '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
-            )
-        offer = driver.find_element(
-            By.XPATH, 
-            '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[2]'
-        )
-
-        bids, offers =  float(bid.text), float(offer.text)
-        driver.quit()
-    finally:
-        print("prices scraped")
-        return bids, offers
-        
+      bids, offers =  float(bid.text), float(offer.text)
+      driver.quit()
+  finally:
+      print("prices scraped")
+      return bids, offers
+      
 
 def update_files(file_path, bid, offer):
     df = pd.read_csv(file_path,skiprows=2, skipfooter=1, engine='python')
@@ -87,7 +85,7 @@ def update_files(file_path, bid, offer):
     df.to_csv(file_path, index=False)
     print("file updated.")
   
-if __main__:
+if __name__ == "__main__":
   bids, offers = scrape(websites['aluminum']) # aluminum
   update_files(files['Aluminum'], bids, offers)
   
@@ -95,7 +93,6 @@ if __main__:
   update_files(files['Copper'], bids, offers)
   
   try:  # Zinc
-  
       driver.get(websites['zinc'])
       print("Website opened")
       time.sleep(1)
