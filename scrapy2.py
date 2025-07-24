@@ -1,4 +1,3 @@
-"""
 print('''        
                AAA               BBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBB   
               A:::A              B::::::::::::::::B  B::::::::::::::::B  
@@ -17,21 +16,20 @@ print('''
  A:::::A                 A:::::A B::::::::::::::::B  B::::::::::::::::B  
 AAAAAAA                   AAAAAAABBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBB                                                                                                                                                  
 ''')
-"""
 print("This code is designed to scrape multiple data sources and export the data of certain metals at 9am EST to a CSV.")
 import pandas as pd
 websites = {'aluminum': 'https://www.lme.com/en/metals/non-ferrous/lme-aluminium#Trading+summary', 
             'copper':'https://www.lme.com/en/metals/non-ferrous/lme-copper#Trading+summary', 
-            'zinc' : 'https://www.lme.com/en/Metals/Non-ferrous/LME-Zinc#Intraday+prices+and+monthly+quotes'}  #   A dictionary that holds all the LME Websites
+            'zinc' : 'https://www.lme.com/en/metals/non-ferrous/lme-zinc#Summary'}  #   A dictionary that holds all the LME Websites
 files = {
-    'Aluminum' : "LME Aluminum.csv",
-    'Copper' :"LME Copper.csv",
-    'Zinc' : "LME Zinc.csv"
+    'Aluminum' : "commodities\LME Aluminum.csv",
+    'Copper' :"commodities\LME Copper.csv",
+    'Zinc' : "commodities\LME Zinc.csv"
 }
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.chrome.options import Options
 import time
 def create_driver():
     options = Options()
@@ -39,38 +37,29 @@ def create_driver():
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--window-size=1920,1080')
-    return webdriver.Firefox(options=options)
+    return webdriver.Chrome(options=options)
 
 def scrape(website):
-    driver = create_driver()
-    bidders = None
-    offerers = None
-    try:
-        # Open the website
-        driver.get(website)
-        print("Website opened")
-        time.sleep(1)
+  driver = create_driver()
+  try:
+      # Open the website
+      driver.get(website)
+      print("Website opened")
+      time.sleep(1)
+      bid = driver.find_element(
+          By.XPATH,
+          '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
+          )
+      offer = driver.find_element(
+          By.XPATH, 
+          '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[2]'
+      )
 
-        try:
-            bid = driver.find_element(
-                By.XPATH,
-                '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
-            )
-            offer = driver.find_element(
-                By.XPATH, 
-                '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[2]'
-            )
-
-            bidders = float(bid.text)
-            offerers = float(offer.text)
-
-        except NoSuchElementException as e:
-            print("Element not found:", e)
-
-    finally:
-        print("prices scraped")
-        driver.quit()
-        return bidders, offerers
+      bids, offers =  float(bid.text), float(offer.text)
+      driver.quit()
+  finally:
+      print("prices scraped")
+      return bids, offers
       
 
 def update_files(file_path, bid, offer):
@@ -95,14 +84,13 @@ def update_files(file_path, bid, offer):
     print("file updated.")
   
 if __name__ == "__main__":
-  print("Aluminum")
   bids, offers = scrape(websites['aluminum']) # aluminum
   update_files(files['Aluminum'], bids, offers)
-  print("Copper")
+  
   bids, offers = scrape(websites['copper'])   # copper 
   update_files(files['Copper'], bids, offers)
+  
   driver = create_driver()
-  print("Zinc")
   try:  # Zinc
       driver.get(websites['zinc'])
       print("Website opened")
@@ -115,3 +103,4 @@ if __name__ == "__main__":
   finally:
       driver.quit()
   update_files(files['Zinc'], bids, bids)
+
