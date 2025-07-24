@@ -40,8 +40,8 @@ def create_driver():
     return webdriver.Chrome(options=options)
 
 def scrape(website):
-    from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.webdriver.support import expected_conditions as EC
+  from selenium.webdriver.support.ui import WebDriverWait
+  from selenium.webdriver.support import expected_conditions as EC
   bids = offers = None
   driver = create_driver()
   try:
