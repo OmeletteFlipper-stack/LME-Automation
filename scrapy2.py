@@ -41,9 +41,9 @@ def create_driver():
     options.add_argument('--window-size=1920,1080')  #css so that elements are not missed.
     
     return webdriver.Firefox(options=options)
-  
+driver = create_driver()
+
 def scrape(website):
-  driver = create_driver()
     try:
         # Open the website
         driver.get(website)
@@ -86,24 +86,24 @@ def update_files(file_path, bid, offer):
     
     df.to_csv(file_path, index=False)
     print("file updated.")
-
-bids, offers = scrape(websites['aluminum']) # aluminum
-update_files(files['Aluminum'], bids, offers)
-
-bids, offers = scrape(websites['copper'])   # copper 
-update_files(files['Copper'], bids, offers)
-
-driver = webdriver.Firefox()
-try:
-
-    driver.get(websites['zinc'])
-    print("Website opened")
-    time.sleep(1)
-    bid = driver.find_element(
-        By.XPATH,
-        '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
-        )
-finally:
-    bids = float(bid.text)
-    driver.quit()
-update_files(files['Zinc'], bids, bids)
+  
+if __main__:
+  bids, offers = scrape(websites['aluminum']) # aluminum
+  update_files(files['Aluminum'], bids, offers)
+  
+  bids, offers = scrape(websites['copper'])   # copper 
+  update_files(files['Copper'], bids, offers)
+  
+  try:  # Zinc
+  
+      driver.get(websites['zinc'])
+      print("Website opened")
+      time.sleep(1)
+      bid = driver.find_element(
+          By.XPATH,
+          '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
+          )
+  finally:
+      bids = float(bid.text)
+      driver.quit()
+  update_files(files['Zinc'], bids, bids)
