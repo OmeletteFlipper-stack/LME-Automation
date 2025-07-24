@@ -95,12 +95,14 @@ def update_files(file_path, bid, offer):
     print("file updated.")
   
 if __name__ == "__main__":
+  print("Aluminum")
   bids, offers = scrape(websites['aluminum']) # aluminum
   update_files(files['Aluminum'], bids, offers)
-  
+  print("Copper")
   bids, offers = scrape(websites['copper'])   # copper 
   update_files(files['Copper'], bids, offers)
   driver = create_driver()
+  print("Zinc")
   try:  # Zinc
       driver.get(websites['zinc'])
       print("Website opened")
