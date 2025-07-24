@@ -107,7 +107,7 @@ if __name__ == "__main__":
       time.sleep(1)
       bid = driver.find_element(
           By.XPATH,
-          '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
+          '/html/body/main/div[1]/div/div/div[2]/div[1]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
           )
       bids = float(bid.text)
   finally:
