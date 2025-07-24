@@ -42,26 +42,35 @@ def create_driver():
     return webdriver.Firefox(options=options)
 
 def scrape(website):
-  driver = create_driver()
-  try:
-      # Open the website
-      driver.get(website)
-      print("Website opened")
-      time.sleep(1)
-      bid = driver.find_element(
-          By.XPATH,
-          '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
-          )
-      offer = driver.find_element(
-          By.XPATH, 
-          '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[2]'
-      )
+    driver = create_driver()
+    bidders = None
+    offerers = None
+    try:
+        # Open the website
+        driver.get(website)
+        print("Website opened")
+        time.sleep(1)
 
-      bidders, offerers =  float(bid.text), float(offer.text)
-      driver.quit()
-  finally:
-      print("prices scraped")
-      return bidders, offerers
+        try:
+            bid = driver.find_element(
+                By.XPATH,
+                '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
+            )
+            offer = driver.find_element(
+                By.XPATH, 
+                '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[2]'
+            )
+
+            bidders = float(bid.text)
+            offerers = float(offer.text)
+
+        except NoSuchElementException as e:
+            print("Element not found:", e)
+
+    finally:
+        print("prices scraped")
+        driver.quit()
+        return bidders, offerers
       
 
 def update_files(file_path, bid, offer):
