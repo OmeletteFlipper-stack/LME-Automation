@@ -40,15 +40,15 @@ def create_driver():
     return webdriver.Chrome(options=options)
 
 def scrape(website):
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
   bids = offers = None
   driver = create_driver()
   try:
-    
     # Open the website
     driver.get(website)
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
     print("Website opened")
-    from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.webdriver.support import expected_conditions as EC
 
     wait = WebDriverWait(driver, 10)
     bid = wait.until(EC.presence_of_element_located((
