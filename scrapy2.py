@@ -22,9 +22,9 @@ websites = {'aluminum': 'https://www.lme.com/en/metals/non-ferrous/lme-aluminium
             'copper':'https://www.lme.com/en/metals/non-ferrous/lme-copper#Trading+summary', 
             'zinc' : 'https://www.lme.com/en/metals/non-ferrous/lme-zinc#Summary'}  #   A dictionary that holds all the LME Websites
 files = {
-    'Aluminum' : "commodities\LME Aluminum.csv",
-    'Copper' :"commodities\LME Copper.csv",
-    'Zinc' : "commodities\LME Zinc.csv"
+    'Aluminum' : "LME Aluminum.csv",
+    'Copper' :"LME Copper.csv",
+    'Zinc' : "LME Zinc.csv"
 }
 
 from selenium import webdriver
