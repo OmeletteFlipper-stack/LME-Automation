@@ -42,7 +42,7 @@ def create_driver():
 def scrape(website):
   driver = create_driver()
   try:
-  
+    
     # Open the website
     driver.get(website)
     print("Website opened")
@@ -54,9 +54,9 @@ def scrape(website):
     By.XPATH, '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
 )))
 
-      offer = driver.find_element(
-          By.XPATH, 
-          '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[2]'
+    offer = driver.find_element(
+        By.XPATH, 
+        '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[2]'
       )
 
       bids, offers =  float(bid.text), float(offer.text)
