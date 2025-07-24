@@ -50,10 +50,10 @@ def scrape(website):
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
 
-    wait = WebDriverWait(driver, 10)
-    bid = wait.until(EC.presence_of_element_located((
+    time.sleep(30)
+    bid = driver.find_element(
     By.XPATH, '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
-    )))
+    )
 
     offer = driver.find_element(
         By.XPATH, 
