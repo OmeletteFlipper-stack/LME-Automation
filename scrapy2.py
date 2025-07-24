@@ -77,8 +77,8 @@ def update_files(file_path, bid, offer):
         'Low': bid / 2204.62,
         'High': offer / 2204.62,
         'Last': ((bid + offer) / 2) / 2204.62,
-        'Change': None,
-        '% Change': None
+        'Change': 0,
+        '% Change': 0
     }])
 
     df = pd.concat([new_row, df], ignore_index=True, axis=0)
