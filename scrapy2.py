@@ -89,7 +89,7 @@ if __name__ == "__main__":
   
   bids, offers = scrape(websites['copper'])   # copper 
   update_files(files['Copper'], bids, offers)
-  
+  driver = create_driver()
   try:  # Zinc
       driver.get(websites['zinc'])
       print("Website opened")
