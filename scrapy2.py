@@ -40,18 +40,24 @@ def create_driver():
     return webdriver.Chrome(options=options)
 
 def scrape(website):
+  from selenium.webdriver.support.ui import WebDriverWait
   bids = offers = None
   driver = create_driver()
   try:
     # Open the website
     driver.get(website)
-    time.sleep(2)
-    print("Website opened")
+    
+    WebDriverWait(driver, 10).until(
+            lambda d: float(d.find_element(
+                By.XPATH, 
+                '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
+            ).text) >= 1
+        )
 
-    wait = WebDriverWait(driver, 10)
-    bid = wait.until(EC.presence_of_element_located((
+    print("Website opened")
+    offer = driver.find_element(
     By.XPATH, '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
-)))
+    )
 
     offer = driver.find_element(
         By.XPATH, 
