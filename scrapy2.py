@@ -40,14 +40,12 @@ def create_driver():
     return webdriver.Chrome(options=options)
 
 def scrape(website):
-  from selenium.webdriver.support.ui import WebDriverWait
-  from selenium.webdriver.support import expected_conditions as EC
   bids = offers = None
   driver = create_driver()
   try:
     # Open the website
     driver.get(website)
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+    time.sleep(2)
     print("Website opened")
 
     wait = WebDriverWait(driver, 10)
@@ -63,9 +61,10 @@ def scrape(website):
     bids, offers =  float(bid.text), float(offer.text)
     driver.quit()
   finally:
-      print("prices scraped")
-      return bids, offers
       
+    print("prices scraped: ",bids, " ",offers)
+    return bids, offers
+    
 
 def update_files(file_path, bid, offer):
     df = pd.read_csv(file_path,skiprows=2, skipfooter=1, engine='python')
