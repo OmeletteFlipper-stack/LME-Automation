@@ -27,22 +27,23 @@ files = {
     'Copper' :"LME Copper.csv",
     'Zinc' : "LME Zinc.csv"
 }
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from shutil import which
-from selenium.webdriver.firefox.options import Options
 
 import time
-
+def create_driver():
+    """Create and configure Firefox driver for headless operation"""
+    options = Options()
+    options.add_argument('--headless')               #runs firefox without a visible browser window.
+    options.add_argument('--no-sandbox')             #disables sandbox security feature
+    options.add_argument('--disable-dev-shm-usage')  #prevents firefox from shared mem.
+    options.add_argument('--window-size=1920,1080')  #css so that elements are not missed.
+    
+    return webdriver.Firefox(options=options)
+  
 def scrape(website):
-  options = Options()
-    options.headless = True  # headless mode for CI
-
-    firefox_path = which("firefox")
-    if firefox_path:
-        options.binary_location = firefox_path
-
-    driver = webdriver.Firefox(options=options)
+  driver = create_driver()
     try:
         # Open the website
         driver.get(website)
