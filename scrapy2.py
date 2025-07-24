@@ -40,24 +40,20 @@ def create_driver():
     return webdriver.Chrome(options=options)
 
 def scrape(website):
-  from selenium.webdriver.support.ui import WebDriverWait
   bids = offers = None
   driver = create_driver()
   try:
+    
     # Open the website
     driver.get(website)
-    
-    WebDriverWait(driver, 10).until(
-            lambda d: float(d.find_element(
-                By.XPATH, 
-                '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
-            ).text) >= 1
-        )
-
     print("Website opened")
-    offer = driver.find_element(
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+
+    wait = WebDriverWait(driver, 10)
+    bid = wait.until(EC.presence_of_element_located((
     By.XPATH, '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
-    )
+    )))
 
     offer = driver.find_element(
         By.XPATH, 
@@ -67,10 +63,10 @@ def scrape(website):
     bids, offers =  float(bid.text), float(offer.text)
     driver.quit()
   finally:
+        print("prices scraped: ",bids, " ",offers)
+
+        return bids, offers
       
-    print("prices scraped: ",bids, " ",offers)
-    return bids, offers
-    
 
 def update_files(file_path, bid, offer):
     df = pd.read_csv(file_path,skiprows=2, skipfooter=1, engine='python')
@@ -79,8 +75,8 @@ def update_files(file_path, bid, offer):
     print(df.head())
     new_row = pd.DataFrame([{
         'Date': yesterday_str,
-        'Low': 0,
-        'High': 0,
+        'Low': bid / 2204.62,
+        'High': offer / 2204.62,
         'Last': ((bid + offer) / 2) / 2204.62,
         'Change': 0,
         '% Change': 0
@@ -116,4 +112,3 @@ if __name__ == "__main__":
   finally:
       driver.quit()
   update_files(files['Zinc'], bids, bids)
-
