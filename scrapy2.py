@@ -22,9 +22,9 @@ websites = {'aluminum': 'https://www.lme.com/en/metals/non-ferrous/lme-aluminium
             'copper':'https://www.lme.com/en/metals/non-ferrous/lme-copper#Trading+summary', 
             'zinc' : 'https://www.lme.com/en/metals/non-ferrous/lme-zinc#Summary'}  #   A dictionary that holds all the LME Websites
 files = {
-    'Aluminum' : "LME Aluminum.csv",
-    'Copper' :"LME Copper.csv",
-    'Zinc' : "LME Zinc.csv"
+    'Aluminum' : "commodities\LME Aluminum.csv",
+    'Copper' :"commodities\LME Copper.csv",
+    'Zinc' : "commodities\LME Zinc.csv"
 }
 
 from selenium import webdriver
@@ -42,14 +42,18 @@ def create_driver():
 def scrape(website):
   driver = create_driver()
   try:
-      # Open the website
-      driver.get(website)
-      print("Website opened")
-      time.sleep(1)
-      bid = driver.find_element(
-          By.XPATH,
-          '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
-          )
+  
+    # Open the website
+    driver.get(website)
+    print("Website opened")
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+
+    wait = WebDriverWait(driver, 10)
+    bid = wait.until(EC.presence_of_element_located((
+    By.XPATH, '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
+)))
+
       offer = driver.find_element(
           By.XPATH, 
           '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[2]'
