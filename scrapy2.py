@@ -40,6 +40,7 @@ def create_driver():
     return webdriver.Chrome(options=options)
 
 def scrape(website):
+  bids = offers = None
   driver = create_driver()
   try:
     
