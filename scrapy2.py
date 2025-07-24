@@ -29,10 +29,20 @@ files = {
 }
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from shutil import which
+from selenium.webdriver.firefox.options import Options
+
 import time
 
 def scrape(website):
-    driver = webdriver.Firefox()
+  options = Options()
+    options.headless = True  # headless mode for CI
+
+    firefox_path = which("firefox")
+    if firefox_path:
+        options.binary_location = firefox_path
+
+    driver = webdriver.Firefox(options=options)
     try:
         # Open the website
         driver.get(website)
