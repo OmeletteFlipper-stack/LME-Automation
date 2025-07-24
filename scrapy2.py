@@ -74,8 +74,8 @@ def update_files(file_path, bid, offer):
     print(df.head())
     new_row = pd.DataFrame([{
         'Date': yesterday_str,
-        'Low': bid / 2204.62,
-        'High': offer / 2204.62,
+        'Low': 0,
+        'High': 0,
         'Last': ((bid + offer) / 2) / 2204.62,
         'Change': 0,
         '% Change': 0
