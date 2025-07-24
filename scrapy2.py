@@ -29,7 +29,7 @@ files = {
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.chrome.options import Options
 import time
 def create_driver():
     options = Options()
@@ -98,7 +98,7 @@ if __name__ == "__main__":
           By.XPATH,
           '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
           )
-  finally:
       bids = float(bid.text)
+  finally:
       driver.quit()
   update_files(files['Zinc'], bids, bids)
