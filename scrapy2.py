@@ -55,11 +55,11 @@ def scrape(website):
           '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[2]'
       )
 
-      bids, offers =  float(bid.text), float(offer.text)
+      bidders, offerers =  float(bid.text), float(offer.text)
       driver.quit()
   finally:
       print("prices scraped")
-      return bids, offers
+      return bidders, offerers
       
 
 def update_files(file_path, bid, offer):
