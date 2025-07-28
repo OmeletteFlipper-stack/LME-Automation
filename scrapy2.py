@@ -17,10 +17,16 @@ def create_driver():
     return webdriver.Firefox(options=options)
 
 def update_files(file_path, bid, offer):
+    if bid is None or offer is None:
+        print("Bid or offer is None. Skipping file update.")
+        return  # Exit early if data is invalid
+
     df = pd.read_csv(file_path, engine='python')
     from datetime import datetime, timedelta
+
     yesterday_str = (datetime.today() - timedelta(days=1)).strftime('%d %b %Y')
     print(df.head())
+
     new_row = pd.DataFrame([{
         'Date': yesterday_str,
         'Low': bid / 2204.62,
@@ -33,9 +39,8 @@ def update_files(file_path, bid, offer):
     df = pd.concat([new_row, df], ignore_index=True, axis=0)
     print(df.head())
 
-    
     df.to_csv(file_path, index=False)
-    print("file updated.")
+    print("File updated.")
 
 commodity_Sites = {"Zinc" : "https://www.lme.com/en/metals/non-ferrous/lme-zinc#Summary",
                    "Aluminum" : "https://www.lme.com/en/metals/non-ferrous/lme-aluminium#Trading+summary",
@@ -44,7 +49,6 @@ commodity_Sites = {"Zinc" : "https://www.lme.com/en/metals/non-ferrous/lme-zinc#
 def scrape_commodity_prices(url):
     driver = create_driver()
     driver.get(url)
-
     try:
         # Wait for the table body to be loaded (more reliable than a specific cell)
         WebDriverWait(driver, 10).until(
