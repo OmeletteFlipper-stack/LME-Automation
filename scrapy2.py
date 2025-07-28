@@ -51,7 +51,7 @@ def scrape_commodity_prices(url):
     driver.get(url)
     try:
         # Wait for the table body to be loaded (more reliable than a specific cell)
-        WebDriverWait(driver, 30).until(
+        WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, 'tbody.data-set-table__body'))
         )
     except Exception as e:
