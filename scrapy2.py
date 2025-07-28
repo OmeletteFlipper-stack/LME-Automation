@@ -1,75 +1,23 @@
-print('''        
-               AAA               BBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBB   
-              A:::A              B::::::::::::::::B  B::::::::::::::::B  
-             A:::::A             B::::::BBBBBB:::::B B::::::BBBBBB:::::B 
-            A:::::::A            BB:::::B     B:::::BBB:::::B     B:::::B
-           A:::::::::A             B::::B     B:::::B  B::::B     B:::::B
-          A:::::A:::::A            B::::B     B:::::B  B::::B     B:::::B
-         A:::::A A:::::A           B::::BBBBBB:::::B   B::::BBBBBB:::::B 
-        A:::::A   A:::::A          B:::::::::::::BB    B:::::::::::::BB  
-       A:::::A     A:::::A         B::::BBBBBB:::::B   B::::BBBBBB:::::B 
-      A:::::AAAAAAAAA:::::A        B::::B     B:::::B  B::::B     B:::::B
-     A:::::::::::::::::::::A       B::::B     B:::::B  B::::B     B:::::B
-    A:::::AAAAAAAAAAAAA:::::A      B::::B     B:::::B  B::::B     B:::::B
-   A:::::A             A:::::A   BB:::::BBBBBB::::::BBB:::::BBBBBB::::::B
-  A:::::A               A:::::A  B:::::::::::::::::B B:::::::::::::::::B 
- A:::::A                 A:::::A B::::::::::::::::B  B::::::::::::::::B  
-AAAAAAA                   AAAAAAABBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBB                                                                                                                                                  
-''')
-print("This code is designed to scrape multiple data sources and export the data of certain metals at 9am EST to a CSV.")
-import pandas as pd
-websites = {'aluminum': 'https://www.lme.com/en/metals/non-ferrous/lme-aluminium#Trading+summary', 
-            'copper':'https://www.lme.com/en/metals/non-ferrous/lme-copper#Trading+summary', 
-            'zinc' : 'https://www.lme.com/en/metals/non-ferrous/lme-zinc#Summary'}  #   A dictionary that holds all the LME Websites
-files = {
-    'Aluminum' : "LME Aluminum.csv",
-    'Copper' :"LME Copper.csv",
-    'Zinc' : "LME Zinc.csv"
-}
-
+from bs4 import BeautifulSoup
 from selenium import webdriver
+
+from selenium.webdriver.firefox.options import Options
+
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-import time
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import pandas as pd
+
 def create_driver():
     options = Options()
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--window-size=1920,1080')
-    return webdriver.Chrome(options=options)
-
-def scrape(website):
-  bids = offers = None
-  driver = create_driver()
-  try:
-    
-    # Open the website
-    driver.get(website)
-    print("Website opened")
-    from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.webdriver.support import expected_conditions as EC
-
-    time.sleep(30)
-    bid = driver.find_element(
-    By.XPATH, '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
-    )
-
-    offer = driver.find_element(
-        By.XPATH, 
-        '/html/body/main/div[1]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[2]'
-      )
-
-    bids, offers =  float(bid.text), float(offer.text)
-    driver.quit()
-  finally:
-        print("prices scraped: ",bids, " ",offers)
-        print(driver.page_source)
-        return bids, offers
-      
+    return webdriver.Firefox(options=options)
 
 def update_files(file_path, bid, offer):
-    df = pd.read_csv(file_path,skiprows=2, skipfooter=1, engine='python')
+    df = pd.read_csv(file_path, engine='python')
     from datetime import datetime, timedelta
     yesterday_str = (datetime.today() - timedelta(days=1)).strftime('%d %b %Y')
     print(df.head())
@@ -88,27 +36,80 @@ def update_files(file_path, bid, offer):
     
     df.to_csv(file_path, index=False)
     print("file updated.")
-  
-if __name__ == "__main__":
-  print('aluminum')
-  bids, offers = scrape(websites['aluminum']) # aluminum
-  update_files(files['Aluminum'], bids, offers)
 
-  print('copper')
-  bids, offers = scrape(websites['copper'])   # copper 
-  update_files(files['Copper'], bids, offers)
-  
-  driver = create_driver()
-  print('zinc')
-  try:  # Zinc
-      driver.get(websites['zinc'])
-      print("Website opened")
-      time.sleep(1)
-      bid = driver.find_element(
-          By.XPATH,
-          '/html/body/main/div[1]/div/div/div[2]/div[1]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]'
-          )
-      bids = float(bid.text)
-  finally:
-      driver.quit()
-  update_files(files['Zinc'], bids, bids)
+commodity_Sites = {"Zinc" : "https://www.lme.com/en/metals/non-ferrous/lme-zinc#Summary",
+                   "Aluminum" : "https://www.lme.com/en/metals/non-ferrous/lme-aluminium#Trading+summary",
+                   "Copper" : "https://www.lme.com/en/metals/non-ferrous/lme-copper#Trading+summary"}
+
+def scrape_commodity_prices(url):
+    driver = create_driver()
+    driver.get(url)
+
+    try:
+        # Wait for the table body to be loaded (more reliable than a specific cell)
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'tbody.data-set-table__body'))
+        )
+    except Exception as e:
+        print("Timed out waiting for page to load:", e)
+        driver.quit()
+        return None, None
+
+    # Parse the page with BeautifulSoup
+    html = driver.page_source
+    soup = BeautifulSoup(html, 'html.parser')
+    driver.quit()  # Close the browser after loading and parsing
+
+    # Find the row for "3-month"
+    rows = soup.find_all('tr', class_='data-set-table__row')
+    for row in rows:
+        contract_cell = row.find('th', attrs={'data-table-column-header': 'Contract'})
+        if contract_cell and contract_cell.get_text(strip=True) == '3-month':
+            bid_cell = row.find('td', attrs={'data-table-column-header': 'Bid'})
+            offer_cell = row.find('td', attrs={'data-table-column-header': 'Offer'})
+
+            if bid_cell and offer_cell:
+                bid = float(bid_cell.get_text(strip=True).replace(',', ''))
+                offer = float(offer_cell.get_text(strip=True).replace(',', ''))
+                print("3-month Bid:", bid, "\n3-month Offer:", offer)
+                return bid, offer
+
+    print("3-month contract not found.")
+
+    
+def zinc_scrape(url):
+    driver = create_driver()
+    driver.get(url)
+    try:
+        # Wait up to 10 seconds for the "Bid" cell to be present in the DOM
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "/html/body/main/div[1]/div/div/div[2]/div[1]/div/div[2]/div[2]/div[1]/div/div[1]/table/tbody/tr[2]/td[1]"))
+        )
+
+    except Exception as e:
+        print("Timed out waiting for page to load:", e)
+        driver.quit()
+        return None, None
+    html =  driver.page_source
+    soup = BeautifulSoup(html, 'html.parser')
+
+    bid_cell = soup.find('td', attrs={'data-table-column-header': 'Bid'})
+    offer_cell = soup.find('td', attrs={'data-table-column-header': 'Offer'})
+    bid_cell = bid_cell.get_text(strip=True)
+    offer_cell = offer_cell.get_text(strip=True)
+
+    print("Bid:", bid_cell
+          , "\nOffer:", offer_cell)
+    return float(bid_cell), float(offer_cell)
+
+
+print("Zinc")
+zincBid, zincOffer = scrape_commodity_prices(commodity_Sites['Zinc'])
+print("Aluminum")
+aluBid, aluOffer = scrape_commodity_prices(commodity_Sites['Aluminum'])
+print("Copper")
+coppBid, coppOffer = scrape_commodity_prices(commodity_Sites['Copper'])
+
+update_files('commodities\LME Zinc.csv', zincBid, zincOffer)
+update_files('commodities\LME Aluminum.csv', aluBid, aluOffer)  
+update_files('commodities\LME Copper.csv', coppBid, coppOffer)
