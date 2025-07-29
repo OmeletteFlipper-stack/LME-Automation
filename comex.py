@@ -48,4 +48,4 @@ def update_files(file_path, low, high,opening):
     df.to_csv(file_path, index=False)
     print("file updated.")
 
-update_files('commodities\COMEX Copper.csv', low, high, open_price)
+update_files('COMEX Copper.csv', low, high, open_price)
