@@ -57,7 +57,7 @@ def update_files(file_path, low, high,opening):
         'Date': yesterday_str,
         'Low': low,
         'High': high,
-        'Last': opening,
+        'Last': (low+high)/2,
         'Change': 0,
         '% Change': 0
     }])
