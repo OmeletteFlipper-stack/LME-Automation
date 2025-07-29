@@ -1,5 +1,3 @@
-sep=,
-COMEX Copper Settlement Price  Spot Month USD/lb
 Date,Low,High,Last,Change,% Change
 28 Jul 2025,-, -, 5.5950, -0.1685, -2.92%
 25 Jul 2025,-, -, 5.7635, -0.0135, -0.23%
@@ -395,4 +393,3 @@ Date,Low,High,Last,Change,% Change
 04 Jan 2024,-, -, 3.8310, -0.0165, -0.43%
 03 Jan 2024,-, -, 3.8475, -0.0215, -0.56%
 02 Jan 2024,-, -, 3.8690, 0.0000, 0.00%
-Average,-, -, 4.4144, -, -
