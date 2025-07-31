@@ -32,7 +32,7 @@ def update_files(file_path,opening):
         'Date': today_str,
         'Low': None,
         'High': None,
-        'Last': opening/2204.62,
+        'Last': round(opening/2204.62,4),
         'Change': None,
         '% Change': None
     }])
