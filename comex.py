@@ -1,3 +1,4 @@
+from math import round
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
@@ -57,7 +58,7 @@ def update_files(file_path, low, high,opening):
         'Date': yesterday_str,
         'Low': low,
         'High': high,
-        'Last': (low+high)/2,
+        'Last': round((low+high)/2,3),
         'Change': 0,
         '% Change': 0
     }])
