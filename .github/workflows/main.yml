@@ -29,6 +29,7 @@ jobs:
         run: |
           python scrapy2.py
           python comex.py
+          python midwest.py
 
       - name: Commit and push updated CSVs
         run: |
