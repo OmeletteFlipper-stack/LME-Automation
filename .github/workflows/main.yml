@@ -24,7 +24,6 @@ jobs:
           pip install selenium
           pip install pandas
           pip install bs4
-          pip install math
 
       - name: Run script
         run: |
