@@ -42,6 +42,8 @@ def update_files(file_path,opening):
 
     
     df.to_csv(file_path, index=False)
+    df['Change'] = round(df['Last'] - df['Last'].shift(-1), 2)
+    df['% Change'] = round(df['Change'] / df['Last'].shift(-1) * 100, 3)
     print("file updated.")
 
 update_files('Midwest Premium.csv',price_element)
