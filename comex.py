@@ -64,7 +64,7 @@ def update_files(file_path, low, high,opening):
 
     df = pd.concat([new_row, df], ignore_index=True, axis=0)
     df['Change'] = round(df['Last'] - df['Last'].shift(-1), 2)
-    df['% Change'] = round(df['Change'] / df['Last'].shift(-1) * 100, 3)
+    df['% Change'] = round(df['Change'] / df['Last'].shift(-1), 4)
     print(df.head())
 
     
