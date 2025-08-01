@@ -37,6 +37,8 @@ def update_files(file_path, bid, offer):
     }])
 
     df = pd.concat([new_row, df], ignore_index=True, axis=0)
+    df['Change'] = round(df['Last'] - df['Last'].shift(-1), 2)
+    df['% Change'] = round(df['Change'] / df['Last'].shift(-1) * 100, 3)
     print(df.head())
 
     df.to_csv(file_path, index=False)
