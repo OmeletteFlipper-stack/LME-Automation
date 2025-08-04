@@ -20,7 +20,6 @@ price_element = float(WebDriverWait(driver, 10).until(
         (By.CSS_SELECTOR, ".last-zoF9r75I.js-symbol-last > span")
     )
 ).text.replace(",",""))
-df = pd.read_csv("Midwest Premium.csv")
 def update_files(file_path,opening):
     df = pd.read_csv(file_path, engine='python')
 
@@ -38,12 +37,12 @@ def update_files(file_path,opening):
     }])
 
     df = pd.concat([new_row, df], ignore_index=True, axis=0)
+    df['Change'] = round(df['Last'] - df['Last'].shift(-1), 2)
+    df['% Change'] = round(df['Change'] / df['Last'].shift(-1), 3)
     print(df.head())
 
     
     df.to_csv(file_path, index=False)
-    df['Change'] = round(df['Last'] - df['Last'].shift(-1), 2)
-    df['% Change'] = round(df['Change'] / df['Last'].shift(-1), 3)
     print("file updated.")
 
 update_files('Midwest Premium.csv',price_element)
